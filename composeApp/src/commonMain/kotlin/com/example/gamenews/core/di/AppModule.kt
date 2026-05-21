@@ -22,6 +22,7 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import com.example.gamenews.presentation.screens.detail.GameDetailViewModel
 
 // ==================== NETWORK MODULE ====================
 val networkModule = module {
@@ -69,6 +70,7 @@ val useCaseModule = module {
 val viewModelModule = module {
     viewModelOf(::HomeViewModel)
     viewModelOf(::AIAssistantViewModel)
+    viewModelOf(::GameDetailViewModel)
 }
 
 // ==================== SHARED MODULES ====================

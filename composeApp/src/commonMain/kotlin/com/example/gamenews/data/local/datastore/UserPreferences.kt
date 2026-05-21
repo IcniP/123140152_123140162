@@ -24,6 +24,7 @@ class UserPreferences(
     // ==================== PREFERENCE KEYS ====================
     
     private object Keys {
+        val FAVORITE_GENRE = stringPreferencesKey("favorite_genre")
         val DARK_MODE = booleanPreferencesKey("dark_mode")
         val SORT_BY = stringPreferencesKey("sort_by")
         val DEFAULT_CATEGORY = stringPreferencesKey("default_category")
@@ -118,6 +119,16 @@ class UserPreferences(
     suspend fun setOnboardingCompleted() {
         dataStore.edit { prefs ->
             prefs[Keys.ONBOARDING_COMPLETED] = true
+        }
+    }
+
+    val favoriteGenre: Flow<String?> = dataStore.data.map { prefs ->
+        prefs[Keys.FAVORITE_GENRE]
+    }
+    suspend fun setFavoriteGenre(genre: String?) {
+        dataStore.edit { prefs ->
+            if (genre != null) prefs[Keys.FAVORITE_GENRE] = genre
+            else prefs.remove(Keys.FAVORITE_GENRE)
         }
     }
 }

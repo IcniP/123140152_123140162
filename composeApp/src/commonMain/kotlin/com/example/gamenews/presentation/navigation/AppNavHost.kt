@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.gamenews.presentation.screens.ai.AIAssistantScreen
+import com.example.gamenews.presentation.screens.detail.GameDetailScreen
 import com.example.gamenews.presentation.screens.home.HomeScreen
 
 @Composable
@@ -31,6 +32,14 @@ fun AppNavHost(
 
         composable<Route.AIAssistant> {
             AIAssistantScreen(
+                onNavigateBack = { navigationActions.navigateBack() }
+            )
+        }
+
+        composable<Route.GameDetail> { backStackEntry ->
+            val route: Route.GameDetail = backStackEntry.toRoute()
+            GameDetailScreen(
+                gameId = route.gameId,
                 onNavigateBack = { navigationActions.navigateBack() }
             )
         }

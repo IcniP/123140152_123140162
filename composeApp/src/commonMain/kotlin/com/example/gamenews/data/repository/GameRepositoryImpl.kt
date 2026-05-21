@@ -11,33 +11,54 @@ class GameRepositoryImpl(
     private val apiService: GameBrainService
 ) : GameRepository {
 
+    private val cachedGames = mutableListOf<Game>()
+
     override fun getLatestGames(): Flow<List<Game>> = flow {
         val result = apiService.searchGames(
             query = "*",
             releaseDate = "last_month",
             sortBy = "release_date"
         )
-
         result.onSuccess { response ->
             val domainList = response.results.map { it.toDomain() }
+            cachedGames.clear()
+            cachedGames.addAll(domainList)
             emit(domainList)
         }.onFailure {
             emit(emptyList())
         }
     }
+
     override fun searchGames(query: String, genre: String?): Flow<List<Game>> = flow {
         val searchQuery = query.ifBlank { "*" }
-
         val result = apiService.searchGames(
             query = searchQuery,
             genre = genre,
             sortBy = "release_date"
         )
-
         result.onSuccess { response ->
-            emit(response.results.map { it.toDomain() })
+            val list = response.results.map { it.toDomain() }
+            cachedGames.clear()
+            cachedGames.addAll(list)
+            emit(list)
         }.onFailure {
             emit(emptyList())
+        }
+    }
+
+    override fun getGameById(id: Long): Flow<Game?> = flow {
+        val result = apiService.getGameDetails(id)
+        result.onSuccess { entity ->
+            // LOG SEMENTARA — hapus setelah tahu field yang benar
+            println("=== RAW GAME DETAIL ===")
+            println("shortDescription: ${entity.shortDescription}")
+            println("description: ${entity.description}")
+            println("about: ${entity.about}")
+            println("gameplay: ${entity.gameplay}")
+            println("=======================")
+            emit(entity.toDomain())
+        }.onFailure {
+            emit(cachedGames.find { it.id == id.toInt() })
         }
     }
 }

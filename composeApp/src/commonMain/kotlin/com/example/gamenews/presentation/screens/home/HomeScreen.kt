@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import com.example.gamenews.domain.model.Game
 import org.koin.compose.viewmodel.koinViewModel
 
+val genreList = listOf("Action", "RPG", "Strategy", "Shooter", "Adventure", "Sports", "Puzzle")
+
 @Composable
 fun HomeScreen(
     onNavigateToDetail: (Long) -> Unit,
@@ -31,6 +33,7 @@ fun HomeScreen(
 ) {
     val games by viewModel.games.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
+    val selectedGenre by viewModel.selectedGenre.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
     Scaffold(
@@ -44,11 +47,12 @@ fun HomeScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { viewModel.onSearchQueryChange(it) },
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
-                placeholder = { Text("Cari judul atau genre (Shooter, RPG, dll)...") },
+                placeholder = { Text("Cari judul game...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
@@ -61,19 +65,48 @@ fun HomeScreen(
                 shape = RoundedCornerShape(12.dp)
             )
 
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                GenreChip(
+                    genre = "Semua",
+                    isSelected = selectedGenre == null,
+                    onClick = { viewModel.onGenreSelected(null) }
+                )
+                genreList.forEach { genre ->
+                    GenreChip(
+                        genre = genre,
+                        isSelected = selectedGenre == genre,
+                        onClick = { viewModel.onGenreSelected(genre) }
+                    )
+                }
+            }
+
+            Divider(modifier = Modifier.padding(top = 8.dp))
+
             Box(modifier = Modifier.fillMaxSize()) {
-                if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                } else if (games.isEmpty()) {
-                    Text("Hasil tidak ditemukan", modifier = Modifier.align(Alignment.Center), color = Color.Gray)
-                } else {
-                    LazyColumn(
+                when {
+                    isLoading -> CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                    games.isEmpty() -> Text(
+                        "Tidak ada game ditemukan",
+                        modifier = Modifier.align(Alignment.Center),
+                        color = Color.Gray
+                    )
+                    else -> LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(games) { game ->
-                            GameItem(game = game)
+                            GameItem(
+                                game = game,
+                                onClick = { onNavigateToDetail(game.id.toLong()) }
+                            )
                         }
                     }
                 }
@@ -101,9 +134,11 @@ fun GenreChip(genre: String, isSelected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun GameItem(game: Game) {
+fun GameItem(game: Game, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         elevation = 4.dp,
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -119,8 +154,16 @@ fun GameItem(game: Game) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = game.genre, style = MaterialTheme.typography.body2, color = Color.DarkGray)
-                Text(text = "⭐ ${game.rating}", style = MaterialTheme.typography.body2, fontWeight = FontWeight.Medium)
+                Text(
+                    text = game.genre,
+                    style = MaterialTheme.typography.body2,
+                    color = Color.DarkGray
+                )
+                Text(
+                    text = "⭐ ${game.rating}",
+                    style = MaterialTheme.typography.body2,
+                    fontWeight = FontWeight.Medium
+                )
             }
             if (game.description.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
