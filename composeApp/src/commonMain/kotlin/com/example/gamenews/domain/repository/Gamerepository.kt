@@ -8,4 +8,5 @@ interface GameRepository {
      * Mengambil daftar game terbaru dari API/Database.
      */
     fun getLatestGames(): Flow<List<Game>>
+    fun getGameById(id: Long): Flow<Game>
 }

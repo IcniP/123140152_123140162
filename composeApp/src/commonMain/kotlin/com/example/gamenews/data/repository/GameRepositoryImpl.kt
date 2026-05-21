@@ -17,12 +17,19 @@ class GameRepositoryImpl(
             releaseDate = "last_month",
             sortBy = "release_date"
         )
-
         result.onSuccess { response ->
-            val domainList = response.results.map { it.toDomain() }
-            emit(domainList)
+            emit(response.results.map { it.toDomain() })
         }.onFailure {
             emit(emptyList())
+        }
+    }
+
+    override fun getGameById(id: Long): Flow<Game> = flow {
+        val result = apiService.getGameDetails(id)
+        result.onSuccess { entity ->
+            emit(entity.toDomain())
+        }.onFailure {
+            throw it
         }
     }
 }

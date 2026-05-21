@@ -2,13 +2,15 @@ package com.example.gamenews.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gamenews.data.local.datastore.UserPreferences
 import com.example.gamenews.domain.model.Game
 import com.example.gamenews.domain.repository.GameRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val repository: GameRepository
+    private val repository: GameRepository,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
 
     private val _allGames = MutableStateFlow<List<Game>>(emptyList())
@@ -35,12 +37,17 @@ class HomeViewModel(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    // Daftar genre unik dari semua game
     val availableGenres: StateFlow<List<String>> = _allGames.map { games ->
         games.map { it.genre }.distinct().sorted()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    init { loadGames() }
+    init {
+        viewModelScope.launch {
+            val savedGenre = userPreferences.favoriteGenre.first()
+            _selectedGenre.value = savedGenre
+        }
+        loadGames()
+    }
 
     fun loadGames() {
         viewModelScope.launch {
@@ -62,6 +69,11 @@ class HomeViewModel(
     }
 
     fun onGenreSelected(genre: String?) {
-        _selectedGenre.value = if (_selectedGenre.value == genre) null else genre
+        val newGenre = if (_selectedGenre.value == genre) null else genre
+        _selectedGenre.value = newGenre
+
+        viewModelScope.launch {
+            userPreferences.setFavoriteGenre(newGenre)
+        }
     }
 }

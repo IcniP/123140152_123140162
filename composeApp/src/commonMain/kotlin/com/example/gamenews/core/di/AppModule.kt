@@ -14,7 +14,8 @@ import com.example.gamenews.domain.repository.AIRepository
 import com.example.gamenews.domain.repository.GameRepository
 import com.example.gamenews.presentation.screens.ai.AIAssistantViewModel
 import com.example.gamenews.presentation.screens.home.HomeViewModel
-import kotlinx.serialization.json.Json // Pastikan import ini ada
+import com.example.gamenews.presentation.screens.detail.GameDetailViewModel
+import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -69,6 +70,7 @@ val useCaseModule = module {
 val viewModelModule = module {
     viewModelOf(::HomeViewModel)
     viewModelOf(::AIAssistantViewModel)
+    viewModelOf(constructor = ::GameDetailViewModel)
 }
 
 // ==================== SHARED MODULES ====================

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.gamenews.domain.model.Game
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
@@ -50,7 +51,6 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Search Bar
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { viewModel.onSearchQueryChange(it) },
@@ -120,7 +120,10 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(games) { game ->
-                                GameItem(game = game)
+                                GameItem(
+                                    game = game,
+                                    onClick = { onNavigateToDetail(game.id.toLong()) }
+                                )
                             }
                         }
                     }
@@ -150,9 +153,14 @@ fun GenreChip(genre: String, isSelected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun GameItem(game: Game) {
+fun GameItem(
+    game: Game,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         elevation = 4.dp,
         shape = MaterialTheme.shapes.medium
     ) {
@@ -178,7 +186,7 @@ fun GameItem(game: Game) {
                     color = Color.DarkGray
                 )
                 Text(
-                    text = "⭐ ${game.rating}",
+                    text = "⭐ ${(game.rating * 10 * 10).roundToInt() / 10.0}",
                     style = MaterialTheme.typography.body2,
                     fontWeight = FontWeight.Medium
                 )
