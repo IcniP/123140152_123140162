@@ -30,16 +30,16 @@ fun AppNavHost(
             )
         }
 
-        composable<Route.AIAssistant> {
-            AIAssistantScreen(
-                onNavigateBack = { navigationActions.navigateBack() }
-            )
-        }
-
         composable<Route.GameDetail> { backStackEntry ->
             val route: Route.GameDetail = backStackEntry.toRoute()
             GameDetailScreen(
                 gameId = route.gameId,
+                onNavigateBack = { navigationActions.navigateBack() }
+            )
+        }
+
+        composable<Route.AIAssistant> {
+            AIAssistantScreen(
                 onNavigateBack = { navigationActions.navigateBack() }
             )
         }
@@ -53,15 +53,12 @@ private fun createNavigationActions(navController: NavHostController): Navigatio
                 popUpTo(Route.Home) { inclusive = true }
             }
         }
-
         override fun navigateToGameDetail(gameId: Long) {
             navController.navigate(Route.GameDetail(gameId))
         }
-
         override fun navigateToAIAssistant() {
             navController.navigate(Route.AIAssistant)
         }
-
         override fun navigateBack() {
             navController.popBackStack()
         }

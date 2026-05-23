@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.gamenews.domain.model.Game
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.math.roundToInt
 
 val genreList = listOf("Action", "RPG", "Strategy", "Shooter", "Adventure", "Sports", "Puzzle")
 
@@ -160,7 +161,7 @@ fun GameItem(game: Game, onClick: () -> Unit) {
                     color = Color.DarkGray
                 )
                 Text(
-                    text = "⭐ ${game.rating}",
+                    text = "⭐ ${(game.rating * 10 * 10).roundToInt() / 10.0}",
                     style = MaterialTheme.typography.body2,
                     fontWeight = FontWeight.Medium
                 )

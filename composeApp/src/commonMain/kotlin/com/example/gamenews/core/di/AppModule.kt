@@ -14,7 +14,8 @@ import com.example.gamenews.domain.repository.AIRepository
 import com.example.gamenews.domain.repository.GameRepository
 import com.example.gamenews.presentation.screens.ai.AIAssistantViewModel
 import com.example.gamenews.presentation.screens.home.HomeViewModel
-import kotlinx.serialization.json.Json // Pastikan import ini ada
+import com.example.gamenews.presentation.screens.detail.GameDetailViewModel
+import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -22,7 +23,6 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import com.example.gamenews.presentation.screens.detail.GameDetailViewModel
 
 // ==================== NETWORK MODULE ====================
 val networkModule = module {
