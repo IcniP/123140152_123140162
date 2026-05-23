@@ -33,11 +33,15 @@ class GameRepositoryImpl(
         val searchQuery = query.ifBlank { "*" }
         val result = apiService.searchGames(
             query = searchQuery,
-            genre = genre,
             sortBy = "release_date"
+            // hapus genre dari sini
         )
         result.onSuccess { response ->
-            val list = response.results.map { it.toDomain() }
+            var list = response.results.map { it.toDomain() }
+            // Filter genre di client-side
+            if (!genre.isNullOrBlank()) {
+                list = list.filter { it.genre.equals(genre, ignoreCase = true) }
+            }
             cachedGames.clear()
             cachedGames.addAll(list)
             emit(list)

@@ -24,7 +24,6 @@ import com.example.gamenews.domain.model.Game
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
 
-val genreList = listOf("Action", "RPG", "Strategy", "Shooter", "Adventure", "Sports", "Puzzle")
 
 @Composable
 fun HomeScreen(
@@ -35,6 +34,7 @@ fun HomeScreen(
     val games by viewModel.games.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val selectedGenre by viewModel.selectedGenre.collectAsState()
+    val availableGenres by viewModel.availableGenres.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
     Scaffold(
@@ -77,7 +77,7 @@ fun HomeScreen(
                     isSelected = selectedGenre == null,
                     onClick = { viewModel.onGenreSelected(null) }
                 )
-                genreList.forEach { genre ->
+                availableGenres.forEach { genre ->
                     GenreChip(
                         genre = genre,
                         isSelected = selectedGenre == genre,
@@ -161,7 +161,7 @@ fun GameItem(game: Game, onClick: () -> Unit) {
                     color = Color.DarkGray
                 )
                 Text(
-                    text = "⭐ ${(game.rating * 10 * 10).roundToInt() / 10.0}",
+                    text = "⭐ ${(game.rating * 10).roundToInt() / 10.0}",
                     style = MaterialTheme.typography.body2,
                     fontWeight = FontWeight.Medium
                 )

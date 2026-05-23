@@ -48,6 +48,10 @@ class HomeViewModel(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val availableGenres: StateFlow<List<String>> = games
+        .map { list -> list.map { it.genre }.distinct().sorted() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     fun onSearchQueryChange(query: String) {
         _searchQuery.value = query
     }
