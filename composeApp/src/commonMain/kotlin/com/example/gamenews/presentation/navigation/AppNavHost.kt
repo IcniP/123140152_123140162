@@ -9,7 +9,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.gamenews.presentation.screens.ai.AIAssistantScreen
 import com.example.gamenews.presentation.screens.detail.GameDetailScreen
-import com.example.gamenews.presentation.screens.home.HomeScreen
 
 @Composable
 fun AppNavHost(
@@ -24,7 +23,7 @@ fun AppNavHost(
         modifier = modifier
     ) {
         composable<Route.Home> {
-            HomeScreen(
+            MainScreen(
                 onNavigateToDetail = { gameId -> navigationActions.navigateToGameDetail(gameId) },
                 onNavigateToAI = { navigationActions.navigateToAIAssistant() }
             )

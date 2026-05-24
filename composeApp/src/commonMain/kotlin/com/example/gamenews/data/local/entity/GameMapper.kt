@@ -2,6 +2,7 @@ package com.example.gamenews.data.mapper
 
 import com.example.gamenews.data.remote.api.GameRemoteEntity
 import com.example.gamenews.domain.model.Game
+import com.example.gamenews.data.local.GameEntity
 
 fun GameRemoteEntity.toDomain(): Game {
     val rawRating = this.rating?.mean?.times(10) ?: 0.0
@@ -22,5 +23,18 @@ fun GameRemoteEntity.toDomain(): Game {
         imageUrl = this.image,
         developer = this.developer,
         releaseYear = this.year?.toInt()
+    )
+}
+
+fun GameEntity.toDomain(): Game {
+    return Game(
+        id = this.id.toInt(),
+        title = this.title,
+        description = this.description,
+        genre = this.genre,
+        rating = this.rating,
+        imageUrl = this.image_url,
+        developer = "",
+        releaseYear = 0
     )
 }

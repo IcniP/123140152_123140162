@@ -6,6 +6,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +27,7 @@ fun GameDetailScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val aiDescription by viewModel.aiDescription.collectAsState()
     val isGeneratingDescription by viewModel.isGeneratingDescription.collectAsState()
+    val isWishlisted by viewModel.isWishlisted.collectAsState()
 
     LaunchedEffect(gameId) {
         viewModel.loadGame(gameId)
@@ -39,6 +42,17 @@ fun GameDetailScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
+                    }
+                },
+                actions = {
+                    if (game != null) {
+                        IconButton(onClick = { viewModel.toggleWishlist() }) {
+                            Icon(
+                                imageVector = if (isWishlisted) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                                contentDescription = "Wishlist",
+                                tint = if (isWishlisted) Color.Red else Color.White
+                            )
+                        }
                     }
                 }
             )
@@ -67,7 +81,6 @@ fun GameDetailScreen(
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // Judul
                         Text(
                             text = g.title,
                             fontSize = 24.sp,
@@ -75,13 +88,11 @@ fun GameDetailScreen(
                             color = MaterialTheme.colors.primary
                         )
 
-                        // Genre & Rating
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             InfoChip(label = "Genre", value = g.genre)
                             InfoChip(label = "Rating", value = "⭐ ${g.rating}")
                         }
 
-                        // Developer & Tahun
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             g.developer?.let {
                                 InfoChip(label = "Developer", value = it)
@@ -93,7 +104,6 @@ fun GameDetailScreen(
 
                         Divider()
 
-                        // About — AI Generated
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -103,7 +113,6 @@ fun GameDetailScreen(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp
                             )
-                            // Badge AI
                             Surface(
                                 shape = MaterialTheme.shapes.small,
                                 color = MaterialTheme.colors.primary.copy(alpha = 0.15f)

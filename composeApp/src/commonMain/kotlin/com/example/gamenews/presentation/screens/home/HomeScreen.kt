@@ -24,7 +24,6 @@ import com.example.gamenews.domain.model.Game
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
 
-
 @Composable
 fun HomeScreen(
     onNavigateToDetail: (Long) -> Unit,
@@ -37,78 +36,66 @@ fun HomeScreen(
     val availableGenres by viewModel.availableGenres.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("GameBrain News", fontWeight = FontWeight.Bold) },
-                backgroundColor = MaterialTheme.colors.primary,
-                contentColor = Color.White,
-                elevation = 4.dp
-            )
-        }
-    ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { viewModel.onSearchQueryChange(it) },
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                placeholder = { Text("Cari judul game...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = null)
-                        }
+    Column(modifier = Modifier.fillMaxSize()) {
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { viewModel.onSearchQueryChange(it) },
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            placeholder = { Text("Cari judul game...") },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
+                        Icon(Icons.Default.Clear, contentDescription = null)
                     }
-                },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp)
-            )
-
-            Row(
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                GenreChip(
-                    genre = "Semua",
-                    isSelected = selectedGenre == null,
-                    onClick = { viewModel.onGenreSelected(null) }
-                )
-                availableGenres.forEach { genre ->
-                    GenreChip(
-                        genre = genre,
-                        isSelected = selectedGenre == genre,
-                        onClick = { viewModel.onGenreSelected(genre) }
-                    )
                 }
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp)
+        )
+
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            GenreChip(
+                genre = "Semua",
+                isSelected = selectedGenre == null,
+                onClick = { viewModel.onGenreSelected(null) }
+            )
+            availableGenres.forEach { genre ->
+                GenreChip(
+                    genre = genre,
+                    isSelected = selectedGenre == genre,
+                    onClick = { viewModel.onGenreSelected(genre) }
+                )
             }
+        }
 
-            Divider(modifier = Modifier.padding(top = 8.dp))
+        Divider(modifier = Modifier.padding(top = 8.dp))
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                when {
-                    isLoading -> CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                    games.isEmpty() -> Text(
-                        "Tidak ada game ditemukan",
-                        modifier = Modifier.align(Alignment.Center),
-                        color = Color.Gray
-                    )
-                    else -> LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(games) { game ->
-                            GameItem(
-                                game = game,
-                                onClick = { onNavigateToDetail(game.id.toLong()) }
-                            )
-                        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            when {
+                isLoading -> CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+                games.isEmpty() -> Text(
+                    "Tidak ada game ditemukan",
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.Gray
+                )
+                else -> LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(games) { game ->
+                        GameItem(
+                            game = game,
+                            onClick = { onNavigateToDetail(game.id.toLong()) }
+                        )
                     }
                 }
             }

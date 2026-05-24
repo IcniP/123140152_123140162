@@ -7,4 +7,8 @@ interface GameRepository {
     fun searchGames(query: String, genre: String? = null): Flow<List<Game>>
     fun getLatestGames(): Flow<List<Game>>
     fun getGameById(id: Long): Flow<Game?>
+
+    fun getWishlistGames(): Flow<List<Game>>
+    suspend fun toggleWishlist(game: Game)
+    fun isGameWishlisted(id: Long): Flow<Boolean>
 }
