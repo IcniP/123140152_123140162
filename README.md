@@ -7,6 +7,8 @@ Aplikasi mobile berbasis **Kotlin Multiplatform (KMP)** yang menyajikan berita g
 
 
 
+https://github.com/user-attachments/assets/0e29a19d-7523-408d-b0b7-45aa23b7dbd6
+
 
 
 ---
